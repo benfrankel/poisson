@@ -1,18 +1,16 @@
-use poisson::Type;
-
-use rand::{rngs::SmallRng, Rng, SeedableRng};
-use rand_distr::StandardNormal;
-
 extern crate nalgebra as na;
-pub type Vect = na::Vector2<f64>;
 
 use alga::linear::FiniteDimVectorSpace;
-
 use num_traits::Zero;
+use poisson::Type;
+use rand::{rngs::SmallRng, Rng, SeedableRng};
+use rand_distr::StandardNormal;
 
 use crate::helper::When::*;
 
 mod helper;
+
+pub type Vect = na::Vector2<f64>;
 
 #[test]
 fn multiple_too_close_invalid() {

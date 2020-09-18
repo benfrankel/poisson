@@ -1,14 +1,12 @@
-use crate::algorithm::{Algorithm, Creator};
-use crate::utils::*;
-use crate::{Builder, Float, Vector};
-
 use num_traits::{Float as NumFloat, NumCast};
-
 use rand::distributions::{Distribution, Standard, Uniform};
 use rand::Rng;
 use rand_distr::StandardNormal;
-
 use sphere::sphere_volume;
+
+use crate::algorithm::{Algorithm, Creator};
+use crate::utils::*;
+use crate::{Builder, Float, Vector};
 
 /// Generates approximately uniform non-maximal Poisson-disk distribution with O(n) time and O(n) space complexity relative to the number of samples generated.
 /// Based on Bridson, Robert. "Fast Poisson disk sampling in arbitrary dimensions." SIGGRAPH Sketches. 2007.

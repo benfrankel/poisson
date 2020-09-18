@@ -17,14 +17,13 @@
 //! using slower but more accurate algorithm.
 //!
 //! ````rust
+//! extern crate nalgebra as na;
 //! extern crate poisson;
 //! extern crate rand;
-//! extern crate nalgebra as na;
-//!
-//! use rand::SeedableRng;
-//! use rand::rngs::SmallRng;
 //!
 //! use poisson::{Builder, Type, algorithm};
+//! use rand::SeedableRng;
+//! use rand::rngs::SmallRng;
 //!
 //! fn main() {
 //!     let poisson =
@@ -40,6 +39,7 @@
 //!
 //! ````rust
 //! # extern crate nalgebra as na;
+//!
 //! # use poisson::{Builder, Type, algorithm};
 //! # use rand::SeedableRng;
 //! # use rand::rngs::SmallRng;
@@ -54,19 +54,17 @@
 //! }
 //! ````
 
-use rand::Rng;
-
-use num_traits::Float as NumFloat;
-use num_traits::{NumCast, Zero};
-
-use alga::general::RealField;
-use alga::linear::{FiniteDimVectorSpace, NormedSpace};
-
 #[macro_use]
 extern crate lazy_static;
 
 use std::marker::PhantomData;
 use std::ops::{AddAssign, DivAssign, MulAssign, SubAssign};
+
+use alga::general::RealField;
+use alga::linear::{FiniteDimVectorSpace, NormedSpace};
+use num_traits::Float as NumFloat;
+use num_traits::{NumCast, Zero};
+use rand::Rng;
 
 use crate::algorithm::{Algorithm, Creator};
 use crate::utils::math::calc_radius;

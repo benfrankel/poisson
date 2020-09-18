@@ -1,10 +1,12 @@
+extern crate nalgebra as na;
+
 use poisson::Type::*;
 
-extern crate nalgebra as na;
-pub type Vect = na::Vector3<f64>;
+use crate::helper::test_with_samples;
 
 mod helper;
-use crate::helper::test_with_samples;
+
+pub type Vect = na::Vector3<f64>;
 
 #[test]
 fn test_3d_1_80_normal() {

@@ -1,12 +1,11 @@
-use crate::algorithm::{Algorithm, Creator};
-use crate::utils::*;
-use crate::{Builder, Float, Vector};
-
 use num_traits::{Float as NumFloat};
 use rand::distributions::{Distribution, Standard, Uniform};
 use rand::Rng;
-
 use sphere::sphere_volume;
+
+use crate::algorithm::{Algorithm, Creator};
+use crate::utils::*;
+use crate::{Builder, Float, Vector};
 
 /// Generates uniform maximal poisson-disk distribution with O(n2<sup>d</sup>) time and O(n2<sup>d</sup>) space complexity relative to the number of samples generated and the dimensionality of the sampling volume.
 /// Based on Ebeida, Mohamed S., et al. "A Simple Algorithm for Maximal Poisson‐Disk Sampling in High Dimensions." Computer Graphics Forum. Vol. 31. No. 2pt4. Blackwell Publishing Ltd, 2012.

@@ -1,15 +1,13 @@
 #![allow(unused)]
-use poisson::{algorithm, Builder, Float, Type, Vector};
 
-use rand::distributions::{Distribution, Standard};
-use rand::{rngs::SmallRng, SeedableRng};
-
-use num_traits::NumCast;
+use std::fmt::Debug;
 
 use alga::general::AbstractField;
 use alga::linear::{FiniteDimVectorSpace, NormedSpace};
-
-use std::fmt::Debug;
+use num_traits::NumCast;
+use poisson::{algorithm, Builder, Float, Type, Vector};
+use rand::distributions::{Distribution, Standard};
+use rand::{rngs::SmallRng, SeedableRng};
 
 pub fn print_v<F: Float, V: Vector<F>>(v: V) -> String {
     let mut result = "(".to_owned();

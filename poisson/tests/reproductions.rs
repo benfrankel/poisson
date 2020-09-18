@@ -1,8 +1,7 @@
 extern crate nalgebra as na;
 
-use rand::{rngs::SmallRng, SeedableRng};
-
 use poisson::{Builder, Type, algorithm};
+use rand::{rngs::SmallRng, SeedableRng};
 
 #[test]
 fn reproduce_issue_29() {

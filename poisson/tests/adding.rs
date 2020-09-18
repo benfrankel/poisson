@@ -1,15 +1,15 @@
-use poisson::{algorithm, Builder, Type};
-
-use rand::{rngs::SmallRng, SeedableRng};
-
 extern crate nalgebra as na;
-pub type Vect = na::Vector2<f64>;
 
 use std::iter::repeat;
+
+use poisson::{algorithm, Builder, Type};
+use rand::{rngs::SmallRng, SeedableRng};
 
 use crate::helper::When::*;
 
 mod helper;
+
+pub type Vect = na::Vector2<f64>;
 
 #[test]
 fn adding_valid_start_works() {

@@ -1,11 +1,10 @@
 //! Module that contains traits that describe poisson-disk distribution generating algorithms.
 
-use crate::{Builder, Float, Vector};
+use std::fmt::Debug;
 
 use rand::Rng;
 
-use std::fmt::Debug;
-
+use crate::{Builder, Float, Vector};
 pub use self::bridson::Bridson;
 pub use self::ebeida::Ebeida;
 

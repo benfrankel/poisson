@@ -1,13 +1,12 @@
 #![feature(test)]
 
+extern crate nalgebra as na;
 extern crate test;
-use test::{black_box, Bencher};
 
 use poisson::{algorithm, Builder, Type};
-
 use rand::{rngs::SmallRng, SeedableRng};
+use test::{black_box, Bencher};
 
-extern crate nalgebra as na;
 pub type Vect = na::Vector3<f64>;
 
 const SEED: [u8; 16] = [

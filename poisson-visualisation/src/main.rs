@@ -1,18 +1,12 @@
-use clap::{App, Arg, ArgMatches, arg_enum, _clap_count_exprs, value_t};
-
-use poisson::{Builder, Type, algorithm::{Bridson, Ebeida}};
-
-use rand::{rngs::SmallRng, Rng, seq::SliceRandom, SeedableRng};
-
-use nalgebra::Vector2;
-
-use image::{ImageBuffer, Rgb};
-
-use lab::Lab;
-
-use fnv::FnvHasher;
-
 use std::hash::Hasher;
+
+use clap::{App, Arg, ArgMatches, arg_enum, _clap_count_exprs, value_t};
+use fnv::FnvHasher;
+use image::{ImageBuffer, Rgb};
+use lab::Lab;
+use nalgebra::Vector2;
+use poisson::{Builder, Type, algorithm::{Bridson, Ebeida}};
+use rand::{rngs::SmallRng, Rng, seq::SliceRandom, SeedableRng};
 
 arg_enum! {
     #[derive(PartialEq, Debug)]

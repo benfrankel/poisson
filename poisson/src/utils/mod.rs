@@ -1,15 +1,13 @@
 //! Helper functions that poisson uses.
 
-use crate::{Builder, Float, Type, Vector};
+use std::marker::PhantomData;
 
+use modulo::Mod;
 use num_traits::{Float as NumFloat, NumCast};
-
 use rand::distributions::{Distribution, Standard};
 use rand::Rng;
 
-use modulo::Mod;
-
-use std::marker::PhantomData;
+use crate::{Builder, Float, Type, Vector};
 
 pub mod math;
 
