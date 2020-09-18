@@ -46,7 +46,7 @@
 //!
 //! fn main() {
 //!     let poisson =
-//!         Builder::<_, na::Vector3<f32>>::with_samples(100, 0.9, Type::Perioditic)
+//!         Builder::<_, na::Vector3<f32>>::with_samples(100, 0.9, Type::Periodic)
 //!             .build(SmallRng::from_entropy(), algorithm::Bridson);
 //!     for sample in poisson {
 //!         println!("{:?}", sample)
@@ -108,7 +108,7 @@ pub enum Type {
     /// Acts like there is void all around the space placing no restrictions to sides.
     Normal,
     /// Makes the space to wrap around on edges allowing tiling of the generated poisson-disk distribution.
-    Perioditic,
+    Periodic,
 }
 
 impl Default for Type {
@@ -165,8 +165,8 @@ where
     /// New Builder with type of distribution, approximate amount of samples and relative radius specified.
     /// The amount of samples should be larger than 0.
     /// The relative radius should be [0, 1].
-    /// For non-perioditic this is supported only for 2, 3 and 4 dimensional generation.
-    /// For perioditic this is supported up to 8 dimensions.
+    /// For non-periodic this is supported only for 2, 3 and 4 dimensional generation.
+    /// For periodic this is supported up to 8 dimensions.
     pub fn with_samples(samples: usize, relative: F, poisson_type: Type) -> Self {
         Builder {
             radius: calc_radius::<F, V>(samples, relative, poisson_type),
@@ -326,12 +326,12 @@ where
         self.poisson.poisson_type
     }
 
-    /// Restricts the poisson algorithm with arbitary sample.
+    /// Restricts the poisson algorithm with arbitrary sample.
     pub fn restrict(&mut self, value: V) {
         self.algo.restrict(value);
     }
 
-    /// Checks legality of sample for currrent distribution.
+    /// Checks legality of sample for current distribution.
     pub fn stays_legal(&self, value: V) -> bool {
         self.algo.stays_legal(&self.poisson, value)
     }

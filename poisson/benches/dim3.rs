@@ -78,49 +78,49 @@ fn bench_bridson_3d_100_80_normal(b: &mut Bencher) {
 }
 
 #[bench]
-fn bench_ebeida_3d_1_80_perioditic(b: &mut Bencher) {
+fn bench_ebeida_3d_1_80_periodic(b: &mut Bencher) {
     let rand = SmallRng::from_seed(SEED);
     let poisson =
-        Builder::<_, Vect>::with_samples(1, 0.8, Type::Perioditic).build(rand, algorithm::Ebeida);
+        Builder::<_, Vect>::with_samples(1, 0.8, Type::Periodic).build(rand, algorithm::Ebeida);
     b.iter(|| black_box(poisson.generate()));
 }
 
 #[bench]
-fn bench_ebeida_3d_10_80_perioditic(b: &mut Bencher) {
+fn bench_ebeida_3d_10_80_periodic(b: &mut Bencher) {
     let rand = SmallRng::from_seed(SEED);
     let poisson =
-        Builder::<_, Vect>::with_samples(10, 0.8, Type::Perioditic).build(rand, algorithm::Ebeida);
+        Builder::<_, Vect>::with_samples(10, 0.8, Type::Periodic).build(rand, algorithm::Ebeida);
     b.iter(|| black_box(poisson.generate()));
 }
 
 #[bench]
-fn bench_ebeida_3d_100_80_perioditic(b: &mut Bencher) {
+fn bench_ebeida_3d_100_80_periodic(b: &mut Bencher) {
     let rand = SmallRng::from_seed(SEED);
     let poisson =
-        Builder::<_, Vect>::with_samples(100, 0.8, Type::Perioditic).build(rand, algorithm::Ebeida);
+        Builder::<_, Vect>::with_samples(100, 0.8, Type::Periodic).build(rand, algorithm::Ebeida);
     b.iter(|| black_box(poisson.generate()));
 }
 
 #[bench]
-fn bench_bridson_3d_1_80_perioditic(b: &mut Bencher) {
+fn bench_bridson_3d_1_80_periodic(b: &mut Bencher) {
     let rand = SmallRng::from_seed(SEED);
     let poisson =
-        Builder::<_, Vect>::with_samples(1, 0.8, Type::Perioditic).build(rand, algorithm::Bridson);
+        Builder::<_, Vect>::with_samples(1, 0.8, Type::Periodic).build(rand, algorithm::Bridson);
     b.iter(|| black_box(poisson.generate()));
 }
 
 #[bench]
-fn bench_bridson_3d_10_80_perioditic(b: &mut Bencher) {
+fn bench_bridson_3d_10_80_periodic(b: &mut Bencher) {
     let rand = SmallRng::from_seed(SEED);
     let poisson =
-        Builder::<_, Vect>::with_samples(10, 0.8, Type::Perioditic).build(rand, algorithm::Bridson);
+        Builder::<_, Vect>::with_samples(10, 0.8, Type::Periodic).build(rand, algorithm::Bridson);
     b.iter(|| black_box(poisson.generate()));
 }
 
 #[bench]
-fn bench_bridson_3d_100_80_perioditic(b: &mut Bencher) {
+fn bench_bridson_3d_100_80_periodic(b: &mut Bencher) {
     let rand = SmallRng::from_seed(SEED);
-    let poisson = Builder::<_, Vect>::with_samples(100, 0.8, Type::Perioditic)
+    let poisson = Builder::<_, Vect>::with_samples(100, 0.8, Type::Periodic)
         .build(rand, algorithm::Bridson);
     b.iter(|| black_box(poisson.generate()));
 }

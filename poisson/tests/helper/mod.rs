@@ -211,7 +211,7 @@ where
     }
 
     let vecs = match poisson_type {
-        Perioditic => {
+        Periodic => {
             let mut vecs2 = vec![];
             for n in 0..3i64.pow(dim as u32) {
                 let mut t = T::zero();

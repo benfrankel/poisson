@@ -12,8 +12,8 @@ fn test_4d_1_80_normal() {
 }
 
 #[test]
-fn test_4d_1_80_perioditic() {
-    test_with_samples::<Vect>(1, 0.8, 100, Perioditic);
+fn test_4d_1_80_periodic() {
+    test_with_samples::<Vect>(1, 0.8, 100, Periodic);
 }
 
 #[test]
@@ -22,8 +22,8 @@ fn test_4d_10_80_normal() {
 }
 
 #[test]
-fn test_4d_10_80_perioditic() {
-    test_with_samples::<Vect>(10, 0.8, 15, Perioditic);
+fn test_4d_10_80_periodic() {
+    test_with_samples::<Vect>(10, 0.8, 15, Periodic);
 }
 
 #[test]
@@ -32,6 +32,6 @@ fn test_4d_100_80_normal() {
 }
 
 #[test]
-fn test_4d_100_80_perioditic() {
-    test_with_samples::<Vect>(100, 0.8, 1, Perioditic);
+fn test_4d_100_80_periodic() {
+    test_with_samples::<Vect>(100, 0.8, 1, Periodic);
 }

@@ -70,8 +70,8 @@ fn newton(samples: usize, dim: usize) -> usize {
 /// Calculates radius from approximate samples and relative radius.
 /// The amount of samples should be larger than 0.
 /// The relative radius should be [0, 1].
-/// For non-perioditic this is supported only for 2, 3 and 4 dimensional generation.
-/// For perioditic this is supported up to 8 dimensions.
+/// For non-periodic this is supported only for 2, 3 and 4 dimensional generation.
+/// For periodic this is supported up to 8 dimensions.
 /// Based on Gamito, Manuel N., and Steve C. Maddock. "Accurate multidimensional Poisson-disk sampling." ACM Transactions on Graphics (TOG) 29.1 (2009): 8.
 pub fn calc_radius<F, V>(samples: usize, relative: F, poisson_type: Type) -> F
 where
@@ -79,14 +79,14 @@ where
     V: Vector<F>,
 {
     use crate::Type::*;
-    assert!(Type::Perioditic == poisson_type || V::dimension() < 5);
+    assert!(Type::Periodic == poisson_type || V::dimension() < 5);
     assert!(V::dimension() < 9);
     assert!(samples > 0);
     assert!(relative >= F::cast(0));
     assert!(relative <= F::cast(1));
     let dim = V::dimension();
     let samples = match poisson_type {
-        Perioditic => samples,
+        Periodic => samples,
         Normal => newton(samples, dim),
     };
     let max_radii: F = NumCast::from(MAX_RADII[dim - 2]).unwrap();

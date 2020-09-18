@@ -39,7 +39,7 @@ where
     /// Returns lower and upper bound of the amount of samples remaining for the algorithm to generate.
     fn size_hint(&self, _: &Builder<F, V>) -> (usize, Option<usize>);
 
-    /// Restricts the algorithm with an arbitary sample.
+    /// Restricts the algorithm with an arbitrary sample.
     fn restrict(&mut self, _: V);
 
     /// Checks if a sample is valid for the poisson-disk distribution generated thus far by the algorithm.

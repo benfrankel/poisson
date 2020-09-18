@@ -19,16 +19,16 @@
 
 This is a library for generating n-dimensional [poisson-disk distributions](http://mollyrocket.com/casey/stream_0014.html).    
 
-It generates distribution of points in [0, 1)<sup>d</sup> where:
+It generates a distribution of points in [0, 1)<sup>d</sup> where:
 
- * For each point there is disk of certain radius which doesn't intersect
- with any other disk of other points
+ * For each point there is a disk of a given radius that doesn't intersect
+ any of the other points' disks
  * Samples fill the space uniformly
 
-Due it's blue noise properties poisson-disk distribution
-can be used for object placement in procedural texture/world generation,
-as source distribution for digital stipling,
-as distribution for sampling in rendering or for (re)meshing.
+Due to its blue noise properties, poisson-disk distributions
+can be used for object placement in procedural texture/world generation;
+as source distributions for digital stippling;
+as distributions for sampling in rendering; or for (re)meshing.
 
 # Usage
 

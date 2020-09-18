@@ -83,7 +83,7 @@ where
     for n in 0..V::dimension() {
         let n = v[n];
         let cur = match poisson_type {
-            Perioditic => n
+            Periodic => n
                 .to_isize()
                 .expect(
                     "Expected that all scalars of the index vector should be castable to \
@@ -221,7 +221,7 @@ where
 {
     let parent = get_parent(index, level);
     let sqradius = NumFloat::powi(F::cast(2) * poisson.radius, 2);
-    // NOTE: This does unnessary checks for corners, but it doesn't affect much in higher dimensions: 5^d vs 5^d - 2d
+    // NOTE: This does unnecessary checks for corners, but it doesn't affect much in higher dimensions: 5^d vs 5^d - 2d
     each_combination(&[-2, -1, 0, 1, 2])
         .filter_map(|t| grid.get(parent.clone() + t))
         .flat_map(|t| t)
@@ -248,7 +248,7 @@ where
     use crate::Type::*;
     let diff = v2 - v1;
     match poisson_type {
-        Perioditic => each_combination(&[-1, 0, 1])
+        Periodic => each_combination(&[-1, 0, 1])
             .map(|v| (diff.clone() + v).norm_squared())
             .fold(NumFloat::max_value(), |a, b| NumFloat::min(a, b)),
         Normal => diff.norm_squared(),
