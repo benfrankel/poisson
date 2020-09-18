@@ -38,11 +38,11 @@ where
             _ => 700. + 100. * dim as f64,
         };
         Algo {
-            a: a,
-            grid: grid,
+            a,
+            grid,
             throws: (a * indices.len() as f64).ceil() as usize,
             range: Uniform::new(0, indices.len()),
-            indices: indices,
+            indices,
             level: 0,
             success: 0,
             outside: vec![],

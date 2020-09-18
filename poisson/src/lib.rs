@@ -143,8 +143,8 @@ where
                 <= NumCast::from(2f64.sqrt() / 2.).expect("Casting constant should always work.")
         );
         Builder {
-            radius: radius,
-            poisson_type: poisson_type,
+            radius,
+            poisson_type,
             _marker: PhantomData,
         }
     }
@@ -157,7 +157,7 @@ where
         Builder {
             radius: relative
                 * NumCast::from(2f64.sqrt() / 2.).expect("Casting constant should always work."),
-            poisson_type: poisson_type,
+            poisson_type,
             _marker: PhantomData,
         }
     }
@@ -170,7 +170,7 @@ where
     pub fn with_samples(samples: usize, relative: F, poisson_type: Type) -> Self {
         Builder {
             radius: calc_radius::<F, V>(samples, relative, poisson_type),
-            poisson_type: poisson_type,
+            poisson_type,
             _marker: PhantomData,
         }
     }
@@ -218,8 +218,8 @@ where
 {
     fn new(poisson: Builder<F, V>, rng: R) -> Self {
         Generator {
-            rng: rng,
-            poisson: poisson,
+            rng,
+            poisson,
             _algo: PhantomData,
         }
     }
@@ -265,8 +265,8 @@ where
     R: Rng,
     A: Creator<F, V>,
 {
-    type IntoIter = PoissonIter<F, V, R, A::Algo>;
     type Item = V;
+    type IntoIter = PoissonIter<F, V, R, A::Algo>;
 
     fn into_iter(self) -> Self::IntoIter {
         PoissonIter {

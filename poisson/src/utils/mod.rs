@@ -38,8 +38,8 @@ where
             .to_usize()
             .expect("Expected that dividing 1 by cell width would be legal.");
         Grid {
-            cell: cell,
-            side: side,
+            cell,
+            side,
             data: vec![
                 vec![];
                 side.pow(
@@ -47,7 +47,7 @@ where
                         .expect("Dimension should be always be castable to u32.")
                 )
             ],
-            poisson_type: poisson_type,
+            poisson_type,
             _marker: PhantomData,
         }
     }
@@ -331,7 +331,7 @@ where
 {
     CombiIter {
         cur: 0,
-        choices: choices,
+        choices,
         _marker: PhantomData,
     }
 }
