@@ -1,41 +1,26 @@
-use num_traits::{Float as NumFloat};
-use rand::distributions::{Distribution, Standard, Uniform};
+use glam::Vec2;
+use rand::distributions::Uniform;
 use rand::Rng;
 use sphere::sphere_volume;
 
 use crate::algorithm::{Algorithm, Creator};
 use crate::utils::*;
-use crate::{Builder, Float, Vector};
+use crate::Builder;
 
 /// Generates uniform maximal poisson-disk distribution with O(n2<sup>d</sup>) time and O(n2<sup>d</sup>) space complexity relative to the number of samples generated and the dimensionality of the sampling volume.
 /// Based on Ebeida, Mohamed S., et al. "A Simple Algorithm for Maximal Poisson‐Disk Sampling in High Dimensions." Computer Graphics Forum. Vol. 31. No. 2pt4. Blackwell Publishing Ltd, 2012.
 #[derive(Debug, Clone, Copy)]
 pub struct Ebeida;
 
-impl<F, V> Creator<F, V> for Ebeida
-where
-    F: Float,
-    V: Vector<F>,
-    Standard: Distribution<F>,
-    Standard: Distribution<V>,
-{
-    type Algo = Algo<F, V>;
+impl Creator for Ebeida {
+    type Algo = Algo;
 
-    fn create(poisson: &Builder<F, V>) -> Self::Algo {
-        let dim = V::dimension();
+    fn create(poisson: &Builder) -> Self::Algo {
         let grid = Grid::new(poisson.radius, poisson.poisson_type);
-        let mut indices = Vec::with_capacity(grid.cells() * dim);
-        let choices = (0..grid.side()).collect::<Vec<_>>();
+        let mut indices = Vec::with_capacity(grid.cells() * 2);
+        let choices = (0..grid.side()).map(|i| i as f32).collect::<Vec<_>>();
         indices.extend(each_combination(&choices));
-        let a = match dim {
-            2 => 0.3,
-            3 => 0.3,
-            4 => 0.6,
-            5 => 10.,
-            6 => 700.,
-            // TODO: Figure out what are optimal values beyond 6 dimensions
-            _ => 700. + 100. * dim as f64,
-        };
+        let a = 0.3;
         Algo {
             a,
             grid,
@@ -45,39 +30,26 @@ where
             level: 0,
             success: 0,
             outside: vec![],
-            mantissa_digits: {
-                let (mantissa, _, _) = <F as NumFloat>::max_value().integer_decode();
-                mantissa.count_ones() as usize
-            },
+            mantissa_digits: f32::MANTISSA_DIGITS as usize,
         }
     }
 }
 
 /// Implementation for the Ebeida algorithm
-pub struct Algo<F, V>
-where
-    F: Float,
-    V: Vector<F>,
-{
-    grid: Grid<F, V>,
-    indices: Vec<V>,
+pub struct Algo {
+    grid: Grid,
+    indices: Vec<Vec2>,
     level: usize,
     range: Uniform<usize>,
     throws: usize,
     success: usize,
-    outside: Vec<V>,
+    outside: Vec<Vec2>,
     mantissa_digits: usize,
     a: f64,
 }
 
-impl<F, V> Algorithm<F, V> for Algo<F, V>
-where
-    F: Float,
-    V: Vector<F>,
-    Standard: Distribution<F>,
-    Standard: Distribution<V>,
-{
-    fn next<R>(&mut self, poisson: &mut Builder<F, V>, rng: &mut R) -> Option<V>
+impl Algorithm for Algo {
+    fn next<R>(&mut self, poisson: &mut Builder, rng: &mut R) -> Option<mint::Vector2<f32>>
     where
         R: Rng,
     {
@@ -120,7 +92,7 @@ where
                             self.range = Uniform::new(0, self.indices.len());
                         }
                         self.success += 1;
-                        return Some(sample);
+                        return Some(sample.into());
                     }
                 }
             }
@@ -144,25 +116,21 @@ where
             sample.clone(),
             &self.outside,
         ) {
-            Some(sample)
+            Some(sample.into())
         } else {
             None
         }
     }
 
-    fn size_hint(&self, poisson: &Builder<F, V>) -> (usize, Option<usize>) {
+    fn size_hint(&self, poisson: &Builder) -> (usize, Option<usize>) {
         // Calculating lower bound should work because we calculate how much volume is left to be filled at worst case and
         // how much sphere can fill it at best case and just figure out how many fills are still needed.
-        let dim = V::dimension();
         let side = 2usize.pow(self.level as u32);
-        let spacing = self.grid.cell() / F::cast(side);
-        let grid_volume = F::cast(self.indices.len()) * NumFloat::powi(spacing, dim as i32);
-        let sphere_volume = sphere_volume(F::cast(2) * poisson.radius, dim as u64);
+        let spacing = self.grid.cell() / (side as f32);
+        let grid_volume = (self.indices.len() as f32) * spacing.powi(2);
+        let sphere_volume = sphere_volume(2.0 * poisson.radius, 2);
         let lower = grid_volume / sphere_volume;
-        let mut lower = NumFloat::floor(lower).to_usize().expect(
-            "Grids volume divided by spheres volume should be always \
-             castable to usize.",
-        );
+        let mut lower = lower.floor() as usize;
         if lower > 0 {
             lower -= 1;
         }
@@ -171,7 +139,8 @@ where
         (lower, Some(upper))
     }
 
-    fn restrict(&mut self, sample: V) {
+    fn restrict(&mut self, sample: mint::Vector2<f32>) {
+        let sample: Vec2 = sample.into();
         self.success += 1;
         let index = sample_to_index(&sample, self.grid.side());
         if let Some(g) = self.grid.get_mut(index) {
@@ -181,48 +150,41 @@ where
         }
     }
 
-    fn stays_legal(&self, poisson: &Builder<F, V>, sample: V) -> bool {
+    fn stays_legal(&self, poisson: &Builder, sample: mint::Vector2<f32>) -> bool {
+        let sample: Vec2 = sample.into();
         let index = sample_to_index(&sample, self.grid.side());
         is_disk_free(&self.grid, poisson, index, 0, sample.clone(), &self.outside)
     }
 }
 
-impl<F, V> Algo<F, V>
-where
-    F: Float,
-    V: Vector<F>,
-{
-    fn subdivide(&mut self, poisson: &Builder<F, V>) {
-        let choices = &[0, 1];
+impl Algo {
+    fn subdivide(&mut self, poisson: &Builder) {
+        let choices = &[0.0, 1.0];
         let (grid, outside, level) = (&self.grid, &self.outside, self.level);
         self.indices.flat_map_inplace(|i| {
             each_combination(choices)
-                .map(move |n: V| n + i.clone() * F::cast(2))
+                .map(move |n: Vec2| n + i.clone() * 2.0)
                 .filter(|c| !covered(grid, poisson, outside, c.clone(), level + 1))
         });
     }
 }
 
-fn covered<F, V>(
-    grid: &Grid<F, V>,
-    poisson: &Builder<F, V>,
-    outside: &[V],
-    index: V,
+fn covered(
+    grid: &Grid,
+    poisson: &Builder,
+    outside: &[Vec2],
+    index: Vec2,
     level: usize,
-) -> bool
-where
-    F: Float,
-    V: Vector<F>,
-{
+) -> bool {
     // TODO: This does 4^d checking of points even though it could be done 3^d
     let side = 2usize.pow(level as u32);
-    let spacing = grid.cell() / F::cast(side);
-    let sqradius = NumFloat::powi(F::cast(2) * poisson.radius, 2);
+    let spacing = grid.cell() / (side as f32);
+    let sqradius = (2.0 * poisson.radius).powi(2);
     let parent = get_parent(index.clone(), level);
-    each_combination(&[0, 1])
+    each_combination(&[0.0, 1.0])
         .map(|t| (index.clone() + t) * spacing)
         .all(|t| {
-            each_combination(&[-2, -1, 0, 1, 2])
+            each_combination(&[-2.0, -1.0, 0.0, 1.0, 2.0])
                 .filter_map(|t| grid.get(parent.clone() + t))
                 .flat_map(|t| t)
                 .any(|v| sqdist(v.clone(), t.clone(), poisson.poisson_type) < sqradius)

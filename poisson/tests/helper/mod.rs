@@ -2,20 +2,15 @@
 
 use std::fmt::Debug;
 
-use alga::general::AbstractField;
-use alga::linear::{FiniteDimVectorSpace, NormedSpace};
-use num_traits::NumCast;
-use poisson::{algorithm, Builder, Float, Type, Vector};
+use glam::Vec2;
+use poisson::{algorithm, Builder, Type};
 use rand::distributions::{Distribution, Standard};
 use rand::{rngs::SmallRng, SeedableRng};
 
-pub fn print_v<F: Float, V: Vector<F>>(v: V) -> String {
+pub fn print_v(v: Vec2) -> String {
     let mut result = "(".to_owned();
-    for i in 0..V::dimension() {
-        result.push_str(&format!("{}, ", v[i].to_f64().unwrap()));
-    }
-    if V::dimension() != 0 {
-        result.pop();
+    for i in 0..2 {
+        result.push_str(&format!("{}, ", v[i] as f64));
     }
     result.push(')');
     result
@@ -28,34 +23,27 @@ pub enum When {
     Never,
 }
 
-pub fn test_with_samples<T>(samples: usize, relative_radius: f64, seeds: u32, ptype: Type)
-where
-    T: Debug + Vector<f64> + Copy,
-    Standard: Distribution<T>,
-{
+pub fn test_with_samples(samples: usize, relative_radius: f32, seeds: u32, ptype: Type) {
     test_with_samples_prefilled(
         samples,
         relative_radius,
         seeds,
         ptype,
-        |_| |_| None::<T>,
+        |_| |_| None,
         When::Always,
     );
 }
 
-pub fn test_with_samples_prefilled<'r, T, F, I>(
+pub fn test_with_samples_prefilled<F, I>(
     samples: usize,
-    relative_radius: f64,
+    relative_radius: f32,
     seeds: u32,
     ptype: Type,
     mut prefiller: F,
     valid: When,
 ) where
-    T: 'r + Debug + Vector<f64> + Copy,
-    F: FnMut(f64) -> I,
-    I: FnMut(Option<T>) -> Option<T>,
-    Standard: Distribution<f64>,
-    Standard: Distribution<T>,
+    F: FnMut(f32) -> I,
+    I: FnMut(Option<Vec2>) -> Option<Vec2>,
 {
     test_algo(
         samples,
@@ -77,21 +65,18 @@ pub fn test_with_samples_prefilled<'r, T, F, I>(
     );
 }
 
-fn test_algo<'r, T, F, I, A>(
+fn test_algo<F, I, A>(
     samples: usize,
-    relative_radius: f64,
+    relative_radius: f32,
     seeds: u32,
     ptype: Type,
     prefiller: &mut F,
     valid: When,
     algo: A,
 ) where
-    T: 'r + Debug + Vector<f64> + Copy,
-    F: FnMut(f64) -> I,
-    I: FnMut(Option<T>) -> Option<T>,
-    A: algorithm::Creator<f64, T>,
-    Standard: Distribution<f64>,
-    Standard: Distribution<T>,
+    F: FnMut(f32) -> I,
+    I: FnMut(Option<Vec2>) -> Option<Vec2>,
+    A: algorithm::Creator,
 {
     use self::When::*;
     for i in 0..seeds {
@@ -126,14 +111,14 @@ fn test_algo<'r, T, F, I, A>(
                 does_prefill = true;
                 match valid {
                     Always => assert!(
-                        poisson_iter.stays_legal(p),
+                        poisson_iter.stays_legal(p.into()),
                         "All prefilled should be accepted by the '{:?}' algorithm. \
                          {} was rejected.",
                         algo,
                         print_v(p)
                     ),
                     Never => assert!(
-                        !poisson_iter.stays_legal(p),
+                        !poisson_iter.stays_legal(p.into()),
                         "All prefilled should be rejected by the '{:?}' algorithm. \
                          {} was allowed even though {:?} was last to be generated.",
                         algo,
@@ -143,11 +128,11 @@ fn test_algo<'r, T, F, I, A>(
                     _ => {}
                 }
                 prefilled.push(p);
-                poisson_iter.restrict(p);
+                poisson_iter.restrict(p.into());
             }
             if let Some(pp) = poisson_iter.next() {
-                last = Some(pp);
-                poisson.push(pp);
+                last = Some(pp.into());
+                poisson.push(pp.into());
             } else {
                 break;
             }
@@ -166,15 +151,12 @@ fn test_algo<'r, T, F, I, A>(
     }
 }
 
-pub fn test_poisson<F, I, T, A>(poisson: I, radius: F, poisson_type: Type, algo: A, does_prefill: bool)
+pub fn test_poisson<I, A>(poisson: I, radius: f32, poisson_type: Type, algo: A, does_prefill: bool)
 where
-    I: Iterator<Item = T>,
-    F: Float,
-    T: Debug + Vector<F> + Copy,
-    A: algorithm::Creator<F, T>,
+    I: Iterator<Item = Vec2>,
+    A: algorithm::Creator,
 {
     use poisson::Type::*;
-    let dim = T::dimension();
     let mut vecs = vec![];
     let mut hints = vec![];
     {
@@ -201,9 +183,9 @@ where
 
     if !does_prefill {
         for v in &vecs {
-            for n in 0..T::dimension() {
-                assert!(v[n] >= F::cast(0));
-                assert!(v[n] < F::cast(1));
+            for n in 0..2 {
+                assert!(v[n] >= 0.0);
+                assert!(v[n] < 1.0);
             }
         }
     }
@@ -211,13 +193,13 @@ where
     let vecs = match poisson_type {
         Periodic => {
             let mut vecs2 = vec![];
-            for n in 0..3i64.pow(dim as u32) {
-                let mut t = T::zero();
+            for n in 0..9i64 {
+                let mut t = Vec2::zero();
                 let mut div = n;
-                for i in 0..T::dimension() {
+                for i in 0..2 {
                     let rem = div % 3;
                     div /= 3;
-                    t[i] = NumCast::from(rem - 1).unwrap();
+                    t[i] = (rem - 1) as f32;
                 }
                 for v in &vecs {
                     vecs2.push(*v + t);
@@ -232,25 +214,23 @@ where
     assert_legal_poisson(&vecs, radius, algo);
 }
 
-pub fn assert_legal_poisson<F, T, A>(vecs: &Vec<T>, radius: F, algo: A)
+pub fn assert_legal_poisson<A>(vecs: &Vec<Vec2>, radius: f32, algo: A)
 where
-    F: Float,
-    T: Debug + Vector<F> + Copy,
-    A: algorithm::Creator<F, T>,
+    A: algorithm::Creator,
 {
     for &v1 in vecs {
         for &v2 in vecs {
             if v1 == v2 {
                 continue;
             }
-            let dist = (v1 - v2).norm();
-            assert!(dist > radius * F::cast(2),
+            let dist = (v1 - v2).length();
+            assert!(dist > radius * 2.0,
                     "Poisson-disk distribution requirement not met while generating using the '{:?}' algorithm: There exists 2 vectors with \
                      distance to each other of {} which is smaller than smallest allowed one {}. \
                      The samples: [{:?}, {:?}]",
                     algo,
-                    dist.to_f64().unwrap(),
-                    radius.to_f64().unwrap() * 2.,
+                    dist as f64,
+                    (radius as f64) * 2.0,
                     v1,
                     v2);
         }

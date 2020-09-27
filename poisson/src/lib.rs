@@ -17,17 +17,13 @@
 //! using slower but more accurate algorithm.
 //!
 //! ````rust
-//! extern crate nalgebra as na;
-//! extern crate poisson;
-//! extern crate rand;
-//!
 //! use poisson::{Builder, Type, algorithm};
 //! use rand::SeedableRng;
 //! use rand::rngs::SmallRng;
 //!
 //! fn main() {
 //!     let poisson =
-//!         Builder::<_, na::Vector2<f64>>::with_radius(0.1, Type::Normal)
+//!         Builder::with_radius(0.1, Type::Normal)
 //!             .build(SmallRng::from_entropy(), algorithm::Ebeida);
 //!     let samples = poisson.generate();
 //!     println!("{:?}", samples);
@@ -38,15 +34,13 @@
 //! and relative disk radius 0.9 using faster but less accurate algorithm.
 //!
 //! ````rust
-//! # extern crate nalgebra as na;
-//!
 //! # use poisson::{Builder, Type, algorithm};
 //! # use rand::SeedableRng;
 //! # use rand::rngs::SmallRng;
 //!
 //! fn main() {
 //!     let poisson =
-//!         Builder::<_, na::Vector3<f32>>::with_samples(100, 0.9, Type::Periodic)
+//!         Builder::with_samples(100, 0.9, Type::Periodic)
 //!             .build(SmallRng::from_entropy(), algorithm::Bridson);
 //!     for sample in poisson {
 //!         println!("{:?}", sample)
@@ -58,12 +52,7 @@
 extern crate lazy_static;
 
 use std::marker::PhantomData;
-use std::ops::{AddAssign, DivAssign, MulAssign, SubAssign};
 
-use alga::general::RealField;
-use alga::linear::{FiniteDimVectorSpace, NormedSpace};
-use num_traits::Float as NumFloat;
-use num_traits::{NumCast, Zero};
 use rand::Rng;
 
 use crate::algorithm::{Algorithm, Creator};
@@ -71,34 +60,6 @@ use crate::utils::math::calc_radius;
 
 pub mod algorithm;
 mod utils;
-
-/// Describes what floats are.
-pub trait Float: NumFloat + RealField + AddAssign + SubAssign + MulAssign + DivAssign {
-    /// Casts usize to float.
-    fn cast(n: usize) -> Self {
-        NumCast::from(n).expect("Casting usize to float should always succeed.")
-    }
-}
-impl<T> Float for T where T: NumFloat + RealField + AddAssign + SubAssign + MulAssign + DivAssign
-{}
-
-/// Describes what vectors are.
-pub trait Vector<F>:
-    Zero
-    + FiniteDimVectorSpace
-    + NormedSpace<RealField = F, ComplexField = F>
-where
-    F: Float,
-{
-}
-impl<T, F> Vector<F> for T
-where
-    F: Float,
-    T: Zero
-        + FiniteDimVectorSpace
-        + NormedSpace<RealField = F, ComplexField = F>,
-{
-}
 
 /// Enum for determining the type of poisson-disk distribution.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -117,46 +78,29 @@ impl Default for Type {
 
 /// Builder for the generator.
 #[derive(Default, Clone, Debug, PartialEq)]
-pub struct Builder<F, V>
-where
-    F: Float,
-    V: Vector<F>,
-{
-    radius: F,
+pub struct Builder {
+    radius: f32,
     poisson_type: Type,
-    _marker: PhantomData<V>,
 }
 
-impl<V, F> Builder<F, V>
-where
-    F: Float,
-    V: Vector<F>,
-{
+impl Builder {
     /// New Builder with type of distribution and radius specified.
     /// The radius should be ]0, √2 / 2]
-    pub fn with_radius(radius: F, poisson_type: Type) -> Self {
-        assert!(F::cast(0) < radius);
-        assert!(
-            radius
-                <= NumCast::from(2f64.sqrt() / 2.).expect("Casting constant should always work.")
-        );
+    pub fn with_radius(radius: f32, poisson_type: Type) -> Self {
+        assert!(0.0 < radius && radius <= 2f32.sqrt() / 2.0);
         Builder {
             radius,
             poisson_type,
-            _marker: PhantomData,
         }
     }
 
     /// New Builder with type of distribution and relative radius specified.
     /// The relative radius should be ]0, 1]
-    pub fn with_relative_radius(relative: F, poisson_type: Type) -> Self {
-        assert!(relative >= F::cast(0));
-        assert!(relative <= F::cast(1));
+    pub fn with_relative_radius(relative: f32, poisson_type: Type) -> Self {
+        assert!(0.0 < relative && relative <= 1.0);
         Builder {
-            radius: relative
-                * NumCast::from(2f64.sqrt() / 2.).expect("Casting constant should always work."),
+            radius: relative * 2f32.sqrt() / 2.0,
             poisson_type,
-            _marker: PhantomData,
         }
     }
 
@@ -165,16 +109,15 @@ where
     /// The relative radius should be [0, 1].
     /// For non-periodic this is supported only for 2, 3 and 4 dimensional generation.
     /// For periodic this is supported up to 8 dimensions.
-    pub fn with_samples(samples: usize, relative: F, poisson_type: Type) -> Self {
+    pub fn with_samples(samples: usize, relative: f32, poisson_type: Type) -> Self {
         Builder {
-            radius: calc_radius::<F, V>(samples, relative, poisson_type),
+            radius: calc_radius(samples, relative, poisson_type),
             poisson_type,
-            _marker: PhantomData,
         }
     }
 
     /// Returns the radius of the generator.
-    pub fn radius(&self) -> F {
+    pub fn radius(&self) -> f32 {
         self.radius
     }
 
@@ -184,10 +127,10 @@ where
     }
 
     /// Builds generator with random number generator and algorithm specified.
-    pub fn build<R, A>(self, rng: R, _algo: A) -> Generator<F, V, R, A>
+    pub fn build<R, A>(self, rng: R, _algo: A) -> Generator<R, A>
     where
         R: Rng,
-        A: Creator<F, V>,
+        A: Creator,
     {
         Generator::new(self, rng)
     }
@@ -195,26 +138,22 @@ where
 
 /// Generates poisson-disk distribution in [0, 1]<sup>d</sup> area.
 #[derive(Clone, Debug)]
-pub struct Generator<F, V, R, A>
+pub struct Generator<R, A>
 where
-    F: Float,
-    V: Vector<F>,
     R: Rng,
-    A: Creator<F, V>,
+    A: Creator,
 {
-    poisson: Builder<F, V>,
+    poisson: Builder,
     rng: R,
     _algo: PhantomData<A>,
 }
 
-impl<F, V, R, A> Generator<F, V, R, A>
+impl<R, A> Generator<R, A>
 where
-    F: Float,
-    V: Vector<F>,
     R: Rng,
-    A: Creator<F, V>,
+    A: Creator,
 {
-    fn new(poisson: Builder<F, V>, rng: R) -> Self {
+    fn new(poisson: Builder, rng: R) -> Self {
         Generator {
             rng,
             poisson,
@@ -223,17 +162,13 @@ where
     }
 
     /// Sets the radius of the generator.
-    pub fn set_radius(&mut self, radius: F) {
-        assert!(F::cast(0) < radius);
-        assert!(
-            radius
-                <= NumCast::from(2f64.sqrt() / 2.).expect("Casting constant should always work.")
-        );
+    pub fn set_radius(&mut self, radius: f32) {
+        assert!(0.0 < radius && radius <= 2f32.sqrt() / 2.0);
         self.poisson.radius = radius;
     }
 
     /// Returns the radius of the generator.
-    pub fn radius(&self) -> F {
+    pub fn radius(&self) -> f32 {
         self.poisson.radius
     }
 
@@ -243,28 +178,24 @@ where
     }
 }
 
-impl<F, V, R, A> Generator<F, V, R, A>
+impl<R, A> Generator<R, A>
 where
-    F: Float,
-    V: Vector<F>,
     R: Rng + Clone,
-    A: Creator<F, V>,
+    A: Creator,
 {
     /// Generates Poisson-disk distribution.
-    pub fn generate(&self) -> Vec<V> {
+    pub fn generate(&self) -> Vec<mint::Vector2<f32>> {
         self.clone().into_iter().collect()
     }
 }
 
-impl<F, V, R, A> IntoIterator for Generator<F, V, R, A>
+impl<R, A> IntoIterator for Generator<R, A>
 where
-    F: Float,
-    V: Vector<F>,
     R: Rng,
-    A: Creator<F, V>,
+    A: Creator,
 {
-    type Item = V;
-    type IntoIter = PoissonIter<F, V, R, A::Algo>;
+    type Item = mint::Vector2<f32>;
+    type IntoIter = PoissonIter<R, A::Algo>;
 
     fn into_iter(self) -> Self::IntoIter {
         PoissonIter {
@@ -277,26 +208,22 @@ where
 
 /// Iterator for generating poisson-disk distribution.
 #[derive(Clone)]
-pub struct PoissonIter<F, V, R, A>
+pub struct PoissonIter<R, A>
 where
-    F: Float,
-    V: Vector<F>,
     R: Rng,
-    A: Algorithm<F, V>,
+    A: Algorithm,
 {
-    poisson: Builder<F, V>,
+    poisson: Builder,
     rng: R,
     algo: A,
 }
 
-impl<F, V, R, A> Iterator for PoissonIter<F, V, R, A>
+impl<R, A> Iterator for PoissonIter<R, A>
 where
-    F: Float,
-    V: Vector<F>,
     R: Rng,
-    A: Algorithm<F, V>,
+    A: Algorithm,
 {
-    type Item = V;
+    type Item = mint::Vector2<f32>;
 
     fn next(&mut self) -> Option<Self::Item> {
         self.algo.next(&mut self.poisson, &mut self.rng)
@@ -307,15 +234,13 @@ where
     }
 }
 
-impl<F, V, R, A> PoissonIter<F, V, R, A>
+impl<R, A> PoissonIter<R, A>
 where
-    F: Float,
-    V: Vector<F>,
     R: Rng,
-    A: Algorithm<F, V>,
+    A: Algorithm,
 {
     /// Returns the radius of the generator.
-    pub fn radius(&self) -> F {
+    pub fn radius(&self) -> f32 {
         self.poisson.radius
     }
 
@@ -325,12 +250,12 @@ where
     }
 
     /// Restricts the poisson algorithm with arbitrary sample.
-    pub fn restrict(&mut self, value: V) {
+    pub fn restrict(&mut self, value: mint::Vector2<f32>) {
         self.algo.restrict(value);
     }
 
     /// Checks legality of sample for current distribution.
-    pub fn stays_legal(&self, value: V) -> bool {
+    pub fn stays_legal(&self, value: mint::Vector2<f32>) -> bool {
         self.algo.stays_legal(&self.poisson, value)
     }
 }

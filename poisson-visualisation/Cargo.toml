@@ -5,7 +5,7 @@ authors = ["WaDelma <>"]
 edition = "2018"
 
 [dependencies]
-nalgebra = { version = "0.22", features = [ "alga" ] }
+glam = "0.9"
 image = "0.23"
 clap = "2"
 rand = "0.7"

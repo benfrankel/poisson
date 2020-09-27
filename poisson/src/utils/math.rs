@@ -1,6 +1,4 @@
-use num_traits::NumCast;
-
-use crate::{Float, Type, Vector};
+use crate::Type;
 
 // const TAU: f64  = 6.283185307179586476925286766559005768394338798750211641949;
 const HALF_TAU: f64 = 3.141592653589793238462643383279502884197169399375105820974;
@@ -73,22 +71,14 @@ fn newton(samples: usize, dim: usize) -> usize {
 /// For non-periodic this is supported only for 2, 3 and 4 dimensional generation.
 /// For periodic this is supported up to 8 dimensions.
 /// Based on Gamito, Manuel N., and Steve C. Maddock. "Accurate multidimensional Poisson-disk sampling." ACM Transactions on Graphics (TOG) 29.1 (2009): 8.
-pub fn calc_radius<F, V>(samples: usize, relative: F, poisson_type: Type) -> F
-where
-    F: Float,
-    V: Vector<F>,
-{
+pub fn calc_radius(samples: usize, relative: f32, poisson_type: Type) -> f32 {
     use crate::Type::*;
-    assert!(Type::Periodic == poisson_type || V::dimension() < 5);
-    assert!(V::dimension() < 9);
     assert!(samples > 0);
-    assert!(relative >= F::cast(0));
-    assert!(relative <= F::cast(1));
-    let dim = V::dimension();
+    assert!(0.0 < relative && relative <= 1.0);
     let samples = match poisson_type {
         Periodic => samples,
-        Normal => newton(samples, dim),
+        Normal => newton(samples, 2),
     };
-    let max_radii: F = NumCast::from(MAX_RADII[dim - 2]).unwrap();
-    num_traits::Float::powf(max_radii / F::cast(samples), F::cast(1) / F::cast(dim)) * relative
+    let max_radii = MAX_RADII[0] as f32;
+    (max_radii / (samples as f32)).powf(0.5) * relative
 }

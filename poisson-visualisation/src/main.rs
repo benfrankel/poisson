@@ -4,7 +4,6 @@ use clap::{App, Arg, ArgMatches, arg_enum, _clap_count_exprs, value_t};
 use fnv::FnvHasher;
 use image::{ImageBuffer, Rgb};
 use lab::Lab;
-use nalgebra::Vector2;
 use poisson::{Builder, Type, algorithm::{Bridson, Ebeida}};
 use rand::{rngs::SmallRng, Rng, seq::SliceRandom, SeedableRng};
 
@@ -93,7 +92,7 @@ fn visualise(m: ArgMatches) {
 
     let mut style_rng = master_rng.clone();
 
-    let builder = Builder::<_, Vector2<f32>>::with_radius(radius, Type::Normal);
+    let builder = Builder::with_radius(radius, Type::Normal);
     let points = if algo == Algo::Ebeida {
         builder.build(master_rng, Ebeida).generate()
     } else {

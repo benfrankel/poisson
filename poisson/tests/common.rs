@@ -9,13 +9,13 @@ pub type Vec2 = naVec2<f64>;
 #[test]
 #[should_panic]
 fn test_normal_too_small_radius() {
-    let _ = Builder::<_, Vec2>::with_radius(0.0, Type::Normal);
+    let _ = Builder::with_radius(0.0, Type::Normal);
 }
 
 #[test]
 #[should_panic]
 fn test_normal_too_large_radius() {
-    let _ = Builder::<_, Vec2>::with_radius(2f64.sqrt() / 2.0 + 0.0001, Type::Normal);
+    let _ = Builder::with_radius(2f32.sqrt() / 2.0 + 0.0001, Type::Normal);
 }
 
 // #[test]
