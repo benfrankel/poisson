@@ -1,10 +1,4 @@
-extern crate nalgebra as na;
-
 use poisson::{Builder, Type};
-
-use crate::na::Vector2 as naVec2;
-
-pub type Vec2 = naVec2<f64>;
 
 #[test]
 #[should_panic]

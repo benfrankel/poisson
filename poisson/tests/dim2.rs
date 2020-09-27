@@ -1,5 +1,3 @@
-extern crate nalgebra as na;
-
 use poisson::Type::*;
 use poisson::{algorithm, Builder};
 use rand::{rngs::SmallRng, SeedableRng};
@@ -7,8 +5,6 @@ use rand::{rngs::SmallRng, SeedableRng};
 use crate::helper::test_with_samples;
 
 mod helper;
-
-pub type Vect = na::Vector2<f64>;
 
 #[test]
 fn test_one_sample_works() {

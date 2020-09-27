@@ -1,5 +1,3 @@
-extern crate nalgebra as na;
-
 use poisson::{algorithm, Builder, Type};
 use rand::{rngs::SmallRng, SeedableRng};
 
