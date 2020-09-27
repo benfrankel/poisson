@@ -18,7 +18,6 @@ coveralls = { repository = "WaDelma/poisson", service = "github" }
 rand = { version = "0.7", features = [ "small_rng" ] }
 rand_distr = "0.2"
 glam = { version = "0.9", features = [ "mint", "rand" ] }
-lazy_static = "1"
 mint = "0.5"
 modulo = "0.1"
 sphere = "0.3"

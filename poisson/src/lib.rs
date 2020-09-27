@@ -48,9 +48,6 @@
 //! }
 //! ````
 
-#[macro_use]
-extern crate lazy_static;
-
 use std::marker::PhantomData;
 
 use rand::Rng;
