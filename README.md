@@ -17,34 +17,32 @@
 [ci]: https://coveralls.io/repos/github/WaDelma/poisson/badge.svg?branch=master
 [cl]: https://coveralls.io/github/WaDelma/poisson?branch=master
 
-This is a library for generating n-dimensional [poisson-disk distributions](http://mollyrocket.com/casey/stream_0014.html).    
+This is a library for generating 2-dimensional [Poisson disk samplings](http://mollyrocket.com/casey/stream_0014.html).    
 
-It generates a distribution of points in [0, 1)<sup>d</sup> where:
+Specifically, it can generate a sampling of points in [0, 1)<sup>2</sup> where:
 
- * For each point there is a disk of a given radius that doesn't intersect
- any of the other points' disks
- * Samples fill the space uniformly
+ * Sample points fill the space uniformly.
+ * Sample points stay a given minimum distance apart.
 
-Due to its blue noise properties, poisson-disk distributions
-can be used for object placement in procedural texture/world generation;
-as source distributions for digital stippling;
-as distributions for sampling in rendering; or for (re)meshing.
+This is equivalent to uniformly filling a unit square with non-overlapping
+disks of equal radius, where the radius is half the minimum distance.
+
+Due to their blue noise properties, Poisson disk samplings can be used for
+object placement in procedural texture/world generation, digital stippling,
+sampling in rendering, or (re)meshing.
 
 # Usage
 
-Works with nalgebra 0.22 and rand 0.7
+Works with mint 0.5 and rand 0.7.
 
 ```rust
-extern crate nalgebra as na;
-
+use poisson::{Builder, Type, algorithm};
 use rand::FromEntropy;
 use rand::rngs::SmallRng;
 
-use poisson::{Builder, Type, algorithm};
-
 fn main() {
     let poisson =
-        Builder::<_, na::Vector2<f64>>::with_radius(0.1, Type::Normal)
+        Builder::with_radius(0.1, Type::Normal)
             .build(SmallRng::from_entropy(), algorithm::Ebeida);
     println!("{:?}", poisson.generate());
 }

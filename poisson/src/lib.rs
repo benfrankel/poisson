@@ -1,20 +1,21 @@
-//! # Poisson-disk distribution generation
+//! # Poisson disk sampling
 //!
-//! Generates distribution of points in [0, 1)<sup>d</sup> where:
+//! Generates a sampling of points in [0, 1)<sup>2</sup> where:
 //!
-//! * For each point there is disk of certain radius which doesn't intersect
-//! with any other disk of other points
-//! * Samples fill the space uniformly
+//! * Sample points fill the space uniformly.
+//! * Sample points stay a given minimum distance apart.
 //!
-//! Due it's blue noise properties poisson-disk distribution
-//! can be used for object placement in procedural texture/world generation,
-//! as source distribution for digital stipling,
-//! as distribution for sampling in rendering or for (re)meshing.
+//! This is equivalent to uniformly filling a unit square with non-overlapping
+//! disks of equal radius, where the radius is half the minimum distance.
+//!
+//! Due to their blue noise properties, Poisson disk samplings can be used for
+//! object placement in procedural texture/world generation, digital stippling,
+//! sampling in rendering, or (re)meshing.
 //!
 //! # Examples
 //!
-//! Generate non-tiling poisson-disk distribution in [0, 1)<sup>2</sup> with disk radius 0.1
-//! using slower but more accurate algorithm.
+//! Generate a non-tiling Poisson disk sampling in [0, 1)<sup>2</sup> with disk radius 0.1
+//! using a slower but more accurate algorithm.
 //!
 //! ````rust
 //! use poisson::{Builder, Type, algorithm};
@@ -30,8 +31,8 @@
 //! }
 //! ````
 //!
-//! Generate tiling poisson-disk distribution in [0, 1)<sup>3</sup> with approximately 100 samples
-//! and relative disk radius 0.9 using faster but less accurate algorithm.
+//! Generate a tiling Poisson disk sampling in [0, 1)<sup>2</sup> with approximately 100 samples
+//! and relative disk radius 0.9 using a faster but less accurate algorithm.
 //!
 //! ````rust
 //! # use poisson::{Builder, Type, algorithm};
@@ -58,12 +59,12 @@ use crate::utils::math::calc_radius;
 pub mod algorithm;
 mod utils;
 
-/// Enum for determining the type of poisson-disk distribution.
+/// Enum for determining the type of Poisson disk sampling.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Type {
     /// Acts like there is void all around the space placing no restrictions to sides.
     Normal,
-    /// Makes the space to wrap around on edges allowing tiling of the generated poisson-disk distribution.
+    /// Makes the space wrap around on edges allowing tiling of the generated Poisson disk sampling.
     Periodic,
 }
 
@@ -82,7 +83,7 @@ pub struct Builder {
 
 impl Builder {
     /// New Builder with type of distribution and radius specified.
-    /// The radius should be ]0, √2 / 2]
+    /// The radius should be in (0, √2 / 2]
     pub fn with_radius(radius: f32, poisson_type: Type) -> Self {
         assert!(0.0 < radius && radius <= 2f32.sqrt() / 2.0);
         Builder {
@@ -92,7 +93,7 @@ impl Builder {
     }
 
     /// New Builder with type of distribution and relative radius specified.
-    /// The relative radius should be ]0, 1]
+    /// The relative radius should be in (0, 1]
     pub fn with_relative_radius(relative: f32, poisson_type: Type) -> Self {
         assert!(0.0 < relative && relative <= 1.0);
         Builder {
@@ -103,9 +104,7 @@ impl Builder {
 
     /// New Builder with type of distribution, approximate amount of samples and relative radius specified.
     /// The amount of samples should be larger than 0.
-    /// The relative radius should be [0, 1].
-    /// For non-periodic this is supported only for 2, 3 and 4 dimensional generation.
-    /// For periodic this is supported up to 8 dimensions.
+    /// The relative radius should be in (0, 1].
     pub fn with_samples(samples: usize, relative: f32, poisson_type: Type) -> Self {
         Builder {
             radius: calc_radius(samples, relative, poisson_type),
@@ -133,7 +132,7 @@ impl Builder {
     }
 }
 
-/// Generates poisson-disk distribution in [0, 1]<sup>d</sup> area.
+/// Generates a Poisson disk sampling in a [0, 1]<sup>d</sup> area.
 #[derive(Clone, Debug)]
 pub struct Generator<R, A>
 where
@@ -180,7 +179,7 @@ where
     R: Rng + Clone,
     A: Creator,
 {
-    /// Generates Poisson-disk distribution.
+    /// Generates a Poisson disk sampling.
     pub fn generate(&self) -> Vec<mint::Vector2<f32>> {
         self.clone().into_iter().collect()
     }
@@ -203,7 +202,7 @@ where
     }
 }
 
-/// Iterator for generating poisson-disk distribution.
+/// Iterator for generating a Poisson disk sampling.
 #[derive(Clone)]
 pub struct PoissonIter<R, A>
 where

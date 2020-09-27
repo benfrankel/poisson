@@ -225,7 +225,7 @@ where
             }
             let dist = (v1 - v2).length();
             assert!(dist > radius * 2.0,
-                    "Poisson-disk distribution requirement not met while generating using the '{:?}' algorithm: There exists 2 vectors with \
+                    "Poisson disk sampling requirement not met while generating using the '{:?}' algorithm: There exists 2 vectors with \
                      distance to each other of {} which is smaller than smallest allowed one {}. \
                      The samples: [{:?}, {:?}]",
                     algo,

@@ -1,4 +1,4 @@
-//! Module that contains traits that describe poisson-disk distribution generating algorithms.
+//! Module that contains traits that describe Poisson disk sampling generating algorithms.
 
 use std::fmt::Debug;
 
@@ -20,7 +20,7 @@ pub trait Creator: Copy + Debug {
     fn create(_: &Builder) -> Self::Algo;
 }
 
-/// Trait that describes poisson-disk distribution generating algorithm.
+/// Trait that describes a Poisson disk sampling generating algorithm.
 pub trait Algorithm {
     /// Generates new sample advancing the algorithm.
     fn next<R>(&mut self, _: &mut Builder, _: &mut R) -> Option<mint::Vector2<f32>>
@@ -33,6 +33,6 @@ pub trait Algorithm {
     /// Restricts the algorithm with an arbitrary sample.
     fn restrict(&mut self, _: mint::Vector2<f32>);
 
-    /// Checks if a sample is valid for the poisson-disk distribution generated thus far by the algorithm.
+    /// Checks if a sample is valid for the Poisson disk sampling generated thus far by the algorithm.
     fn stays_legal(&self, _: &Builder, _: mint::Vector2<f32>) -> bool;
 }
