@@ -172,16 +172,10 @@ where
     pub fn poisson_type(&self) -> Type {
         self.poisson.poisson_type
     }
-}
 
-impl<R, A> Generator<R, A>
-where
-    R: Rng + Clone,
-    A: Creator,
-{
     /// Generates a Poisson disk sampling.
-    pub fn generate(&self) -> Vec<mint::Vector2<f32>> {
-        self.clone().into_iter().collect()
+    pub fn generate(self) -> Vec<mint::Vector2<f32>> {
+        self.into_iter().collect()
     }
 }
 
