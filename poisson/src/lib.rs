@@ -132,7 +132,7 @@ impl Builder {
     }
 }
 
-/// Generates a Poisson disk sampling in a [0, 1]<sup>d</sup> area.
+/// Generates a Poisson disk sampling in a [0, 1)<sup>2</sup> area.
 #[derive(Clone, Debug)]
 pub struct Generator<R, A>
 where

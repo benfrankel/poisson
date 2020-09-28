@@ -9,9 +9,9 @@ fn newton(samples: usize) -> usize {
     let mut n = 1f64;
     for _ in 0..5 {
         n = n
-            - (n + ALPHA * n.powf(BETA + 1.) - samples as f64)
-                / (1. + ALPHA * (BETA + 1.) * n.powf(BETA));
-        if n < 1. {
+            - (n + ALPHA * n.powf(BETA + 1.0) - samples as f64)
+                / (1.0 + ALPHA * (BETA + 1.0) * n.powf(BETA));
+        if n < 1.0 {
             return 1;
         }
     }
@@ -28,7 +28,7 @@ pub fn calc_radius(samples: usize, relative: f32, poisson_type: Type) -> f32 {
     const GAMMA: f32 = 1.0;
     // TODO: Replace 1.7320508 with 3f32.sqrt() once sqrt is const
     //       (see https://github.com/rust-lang/rust/issues/57241)
-    const MAX_PACKING_DENSITY: f32 = 1. / 6. * PI * 1.7320508;
+    const MAX_PACKING_DENSITY: f32 = 1.0 / 6.0 * PI * 1.7320508;
     const MAX_RADIUS: f32 = MAX_PACKING_DENSITY * GAMMA / PI;
 
     assert!(samples > 0);

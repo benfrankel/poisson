@@ -106,9 +106,9 @@ fn visualise(m: ArgMatches) {
     for p in points {
         let pp = ps.pop().unwrap();
         let col = Rgb(Lab {
-                l: style_rng.gen::<f32>() * 80. + 10.,
-                a: pp.x * 256. - 128.,
-                b: pp.y * 256. - 128.
+                l: style_rng.gen::<f32>() * 80.0 + 10.0,
+                a: pp.x * 256.0 - 128.0,
+                b: pp.y * 256.0 - 128.0,
             }.to_rgb()
         );
 
@@ -133,7 +133,7 @@ fn visualise(m: ArgMatches) {
                     // Outside of the picture vertically
                     continue;
                 }
-                if xx * xx / (rx * rx) + yy * yy / (ry * ry) > 1. {
+                if xx * xx / (rx * rx) + yy * yy / (ry * ry) > 1.0 {
                     // Outside of the disk
                     continue;
                 }
@@ -144,7 +144,7 @@ fn visualise(m: ArgMatches) {
                 } else {
                     image[(xxx, yyy)] = Rgb([255, 255, 255]);
                 }
-                if style == Style::Plain && (xx == 0. || yy == 0.) {
+                if style == Style::Plain && (xx == 0.0 || yy == 0.0) {
                     image[(xxx, yyy)] = Rgb([255, 0, 0]);
                 }
             }

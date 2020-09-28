@@ -123,7 +123,7 @@ impl Algo {
             self.active_samples.push(sample.clone());
             self.grid
                 .get_mut(index)
-                .expect("Because the sample is [0, 1) indexing it should work.")
+                .expect("Because the sample is in [0, 1), indexing it should work.")
                 .push(sample);
             self.success += 1;
             true
@@ -154,9 +154,9 @@ fn random_point_annulus_does_not_generate_outside_annulus() {
     use rand::{rngs::SmallRng, SeedableRng};
     let mut rng = SmallRng::seed_from_u64(42);
     for _ in 0..10000 {
-        let result = random_point_annulus(&mut rng, 1., 2.);
-        assert!(result.length() >= 1.);
-        assert!(result.length() <= 2.);
+        let result = random_point_annulus(&mut rng, 1.0, 2.0);
+        assert!(result.length() >= 1.0);
+        assert!(result.length() <= 2.0);
     }
 }
 
@@ -167,15 +167,15 @@ fn random_point_annulus_generates_all_quadrants() {
     let (mut top_left, mut top_right, mut bottom_left, mut bottom_right) =
         (false, false, false, false);
     for _ in 0..10000 {
-        let result = random_point_annulus(&mut rng, 1., 2.);
-        if result.y() < 0. {
-            if result.x() < 0. {
+        let result = random_point_annulus(&mut rng, 1.0, 2.0);
+        if result.y() < 0.0 {
+            if result.x() < 0.0 {
                 bottom_left = true;
             } else {
                 bottom_right = true;
             }
         } else {
-            if result.x() < 0. {
+            if result.x() < 0.0 {
                 top_left = true;
             } else {
                 top_right = true;

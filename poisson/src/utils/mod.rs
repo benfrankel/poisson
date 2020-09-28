@@ -85,7 +85,7 @@ pub fn decode(index: usize, side: usize) -> Option<Vec2> {
 
 #[test]
 fn encoding_decoding_works() {
-    let n = Vec2::new(10., 7.);
+    let n = Vec2::new(10.0, 7.0);
     assert_eq!(
         n,
         decode(encode(&n, 15, Type::Normal).unwrap(), 15).unwrap(),
@@ -94,7 +94,7 @@ fn encoding_decoding_works() {
 
 #[test]
 fn encoding_decoding_at_edge_works() {
-    let n = Vec2::new(14., 14.);
+    let n = Vec2::new(14.0, 14.0);
     assert_eq!(
         n,
         decode(encode(&n, 15, Type::Normal).unwrap(), 15).unwrap()
@@ -103,9 +103,9 @@ fn encoding_decoding_at_edge_works() {
 
 #[test]
 fn encoding_outside_of_area_fails() {
-    let n = Vec2::new(9., 7.);
+    let n = Vec2::new(9.0, 7.0);
     assert_eq!(None, encode(&n, 9, Type::Normal));
-    let n = Vec2::new(7., 9.);
+    let n = Vec2::new(7.0, 9.0);
     assert_eq!(None, encode(&n, 9, Type::Normal));
 }
 
@@ -131,9 +131,9 @@ fn random_point_is_between_right_values_top_lvl() {
     let grid = Grid::new(radius, Type::Normal);
     for _ in 0..1000 {
         let result = choose_random_sample(&mut rand, &grid, Vec2::zero(), 0);
-        assert!(result.x() >= 0.);
+        assert!(result.x() >= 0.0);
         assert!(result.x() < grid.cell);
-        assert!(result.y() >= 0.);
+        assert!(result.y() >= 0.0);
         assert!(result.y() < grid.cell);
     }
 }
@@ -202,11 +202,11 @@ pub fn get_parent(mut index: Vec2, level: usize) -> Vec2 {
 fn getting_parent_works() {
     let divides = 4;
     let cells_per_cell = 2usize.pow(divides as u32);
-    let testee = Vec2::new(1., 2.);
+    let testee = Vec2::new(1.0, 2.0);
     assert_eq!(
         testee,
         get_parent(
-            (testee * cells_per_cell as f32) + Vec2::new(0., 15.),
+            (testee * cells_per_cell as f32) + Vec2::new(0.0, 15.0),
             divides
         )
     );
@@ -239,7 +239,7 @@ impl<'a> Iterator for CombiIter<'a> {
 }
 
 /// Iterates through all combinations of vectors with allowed values as scalars.
-pub fn each_combination<'a>(choices: &'a [f32]) -> CombiIter<'a> {
+pub fn each_combination(choices: &[f32]) -> CombiIter {
     CombiIter {
         cur: 0,
         choices,
