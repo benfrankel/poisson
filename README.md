@@ -28,7 +28,9 @@ Specifically, poisson2d can generate a sampling of points in [0, 1)<sup>2</sup> 
  * Sample points stay a given minimum distance apart.
 
 This is equivalent to uniformly filling a unit square with non-overlapping
-disks of equal radius, where the radius is half the minimum distance.
+disks of equal radius, where the radius is half the minimum distance:
+
+![Example of a Poisson disk sampling represented as non-overlapping disks](poisson-visualisation/output.png)
 
 Due to their blue noise properties, Poisson disk samplings can be used for
 object placement in procedural texture/world generation, digital stippling,
