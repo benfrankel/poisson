@@ -1,4 +1,4 @@
-use poisson::{Builder, Type};
+use poisson2d::{Builder, Type};
 
 #[test]
 #[should_panic]

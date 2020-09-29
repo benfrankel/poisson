@@ -18,7 +18,7 @@
 //! using a slower but more accurate algorithm.
 //!
 //! ````rust
-//! use poisson::{Builder, Type, algorithm};
+//! use poisson2d::{Builder, Type, algorithm};
 //! use rand::SeedableRng;
 //! use rand::rngs::SmallRng;
 //!
@@ -35,7 +35,7 @@
 //! and relative disk radius 0.9 using a faster but less accurate algorithm.
 //!
 //! ````rust
-//! # use poisson::{Builder, Type, algorithm};
+//! # use poisson2d::{Builder, Type, algorithm};
 //! # use rand::SeedableRng;
 //! # use rand::rngs::SmallRng;
 //!

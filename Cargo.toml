@@ -1,5 +1,5 @@
 [workspace]
-members = ["poisson", "poisson-visualisation"]
+members = ["poisson2d", "poisson-visualisation"]
 
 [profile.test]
 opt-level = 3

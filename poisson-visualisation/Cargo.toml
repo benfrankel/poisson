@@ -11,4 +11,4 @@ clap = "2"
 rand = "0.7"
 lab = "0.8"
 fnv = "1"
-poisson = { path = "../poisson" }
+poisson2d = { path = "../poisson2d" }

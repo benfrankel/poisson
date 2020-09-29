@@ -4,7 +4,7 @@ use clap::{App, Arg, ArgMatches, arg_enum, _clap_count_exprs, value_t};
 use fnv::FnvHasher;
 use image::{ImageBuffer, Rgb};
 use lab::Lab;
-use poisson::{Builder, Type, algorithm::{Bridson, Ebeida}};
+use poisson2d::{Builder, Type, algorithm::{Bridson, Ebeida}};
 use rand::{rngs::SmallRng, Rng, seq::SliceRandom, SeedableRng};
 
 arg_enum! {
@@ -28,7 +28,7 @@ fn main() {
     let app = App::new("Poisson visualisation")
         .author("delma")
         .version("0.1.0")
-        .about("Visualisation for poisson library")
+        .about("Visualisation for poisson2d library")
         .arg(
             Arg::with_name("OUTPUT")
                 .help("Output file that's generated")

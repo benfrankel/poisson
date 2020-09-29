@@ -1,5 +1,5 @@
 use glam::Vec2;
-use poisson::Type;
+use poisson2d::Type;
 use rand::{rngs::SmallRng, Rng, SeedableRng};
 use rand_distr::StandardNormal;
 

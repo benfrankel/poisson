@@ -1,5 +1,5 @@
-use poisson::Type::*;
-use poisson::{algorithm, Builder};
+use poisson2d::Type::*;
+use poisson2d::{algorithm, Builder};
 use rand::{rngs::SmallRng, SeedableRng};
 
 use crate::helper::test_with_samples;

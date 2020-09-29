@@ -3,7 +3,7 @@
 use std::fmt::Debug;
 
 use glam::Vec2;
-use poisson::{algorithm, Builder, Type};
+use poisson2d::{algorithm, Builder, Type};
 use rand::distributions::{Distribution, Standard};
 use rand::{rngs::SmallRng, SeedableRng};
 
@@ -156,7 +156,7 @@ where
     I: Iterator<Item = Vec2>,
     A: algorithm::Creator,
 {
-    use poisson::Type::*;
+    use poisson2d::Type::*;
     let mut vecs = vec![];
     let mut hints = vec![];
     {

@@ -1,7 +1,7 @@
 use std::iter::repeat;
 
 use glam::Vec2;
-use poisson::{algorithm, Builder, Type};
+use poisson2d::{algorithm, Builder, Type};
 use rand::{rngs::SmallRng, SeedableRng};
 
 use crate::helper::When::*;

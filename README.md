@@ -1,25 +1,28 @@
-# poisson
+# poisson2d
 
 [![Documentation][di]][dl] [![Crates.io][ri]][rl] [![License: MIT][li]][ll] [![Build Status][ti]][tl] [![Coverage Status][ci]][cl]   
 
-[di]: https://docs.rs/poisson/badge.svg
-[dl]: https://docs.rs/poisson
+[di]: https://docs.rs/poisson2d/badge.svg
+[dl]: https://docs.rs/poisson2d
 
-[ri]: https://img.shields.io/crates/v/poisson.svg
-[rl]: https://crates.io/crates/poisson/
+[ri]: https://img.shields.io/crates/v/poisson2d.svg
+[rl]: https://crates.io/crates/poisson2d/
 
 [li]: https://img.shields.io/badge/License-MIT-blue.svg
 [ll]: https://opensource.org/licenses/MIT
 
-[ti]: https://travis-ci.org/WaDelma/poisson.svg?branch=master
-[tl]: https://travis-ci.org/WaDelma/poisson
+[ti]: https://travis-ci.org/benfrankel/poisson2d.svg?branch=master
+[tl]: https://travis-ci.org/benfrankel/poisson2d
 
-[ci]: https://coveralls.io/repos/github/WaDelma/poisson/badge.svg?branch=master
-[cl]: https://coveralls.io/github/WaDelma/poisson?branch=master
+[ci]: https://coveralls.io/repos/github/benfrankel/poisson2d/badge.svg?branch=master
+[cl]: https://coveralls.io/github/benfrankel/poisson2d?branch=master
 
-This is a library for generating 2-dimensional [Poisson disk samplings](http://mollyrocket.com/casey/stream_0014.html).    
+poisson2d is a fork of [poisson](https://crates.io/crates/poisson), a library for generating N-dimensional [Poisson disk
+samplings](http://mollyrocket.com/casey/stream_0014.html). It provides a `mint` API for compatibility with most computer
+graphics linear algebra libraries, but can only generate 2D samplings. If you're interested in higher-dimensional
+samplings, see [poisson](https://crates.io/crates/poisson).
 
-Specifically, it can generate a sampling of points in [0, 1)<sup>2</sup> where:
+Specifically, poisson2d can generate a sampling of points in [0, 1)<sup>2</sup> where:
 
  * Sample points fill the space uniformly.
  * Sample points stay a given minimum distance apart.
@@ -36,7 +39,7 @@ sampling in rendering, or (re)meshing.
 Works with mint 0.5 and rand 0.7.
 
 ```rust
-use poisson::{Builder, Type, algorithm};
+use poisson2d::{Builder, Type, algorithm};
 use rand::FromEntropy;
 use rand::rngs::SmallRng;
 

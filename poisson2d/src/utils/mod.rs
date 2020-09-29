@@ -1,4 +1,4 @@
-//! Helper functions that poisson uses.
+//! Helper functions that poisson2d uses.
 
 use glam::Vec2;
 use modulo::Mod;

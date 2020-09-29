@@ -1,4 +1,4 @@
-use poisson::{algorithm, Builder, Type};
+use poisson2d::{algorithm, Builder, Type};
 use rand::{rngs::SmallRng, SeedableRng};
 
 #[test]
