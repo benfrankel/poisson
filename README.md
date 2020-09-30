@@ -1,6 +1,6 @@
 # poisson2d
 
-[![Documentation][di]][dl] [![Crates.io][ri]][rl] [![License: MIT][li]][ll] [![Build Status][ti]][tl] [![Coverage Status][ci]][cl]   
+[![Documentation][di]][dl] [![Crates.io][ri]][rl] [![License: MIT][li]][ll] [![Build Status][ti]][tl]
 
 [di]: https://docs.rs/poisson2d/badge.svg
 [dl]: https://docs.rs/poisson2d
@@ -13,9 +13,6 @@
 
 [ti]: https://travis-ci.org/benfrankel/poisson2d.svg?branch=master
 [tl]: https://travis-ci.org/benfrankel/poisson2d
-
-[ci]: https://coveralls.io/repos/github/benfrankel/poisson2d/badge.svg?branch=master
-[cl]: https://coveralls.io/github/benfrankel/poisson2d?branch=master
 
 poisson2d is a fork of [poisson](https://crates.io/crates/poisson), a library for generating N-dimensional [Poisson disk
 samplings](http://mollyrocket.com/casey/stream_0014.html). It provides a `mint` API for compatibility with most computer

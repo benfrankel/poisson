@@ -1,4 +1,3 @@
-sudo: true
 language: rust
 
 cache:
@@ -21,29 +20,18 @@ rust:
   - beta
   - nightly
 
-matrix:
+jobs:
   allow_failures:
     - rust: nightly
 
-# TODO: Because caching when installing cargo-travis there can already exists one which fails because cargo install is stupid.
-# -f could be used to force installation, but that kinda defeats the point of caching,
-# so we just ignore error for now and just cross fingers and hope that there exists cargo-travis.
 before_script:
-  - |
-      cargo install cargo-travis &&
-      export PATH=$HOME/.cargo/bin:$PATH || true
+  - export PATH="${PATH}:${HOME}/.cargo/bin"
 
 script:
   - |
-      cargo build -v
-      travis_wait 30 cargo test
-      if [ "$TRAVIS_RUST_VERSION" == "nightly" ]; then
-        cargo bench -v --no-run --all-features;
+      cargo build --verbose --all-features;
+      travis_wait 30 cargo test;
+      if [ "${TRAVIS_RUST_VERSION}" == 'nightly' ]; then
+        cargo bench --verbose --no-run --all-features;
       fi
-      cargo doc -v
-
-after_success:
-  - |
-      if [ "$TRAVIS_RUST_VERSION" == "stable" ]; then
-        cargo coveralls --all --exclude-pattern tests/;
-      fi
+      cargo doc --verbose;
