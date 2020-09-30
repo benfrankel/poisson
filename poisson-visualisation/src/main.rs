@@ -1,6 +1,6 @@
 use std::hash::Hasher;
 
-use clap::{App, Arg, ArgMatches, arg_enum, _clap_count_exprs, value_t};
+use clap::{App, Arg, ArgMatches, arg_enum, value_t};
 use fnv::FnvHasher;
 use image::{ImageBuffer, Rgb};
 use lab::Lab;
